@@ -470,7 +470,7 @@ void addProduct() {
     struct Product *p = searchBST(root, id);
     if (p && p->stock < LOW_STOCK_THRESHOLD) {
         p->lowStockFlag = 1;
-        printf("⚠️ Low stock alert for new product!\n");
+        printf("Low stock alert for new product!\n");
     }
 }
 
@@ -633,7 +633,7 @@ void updateStockAfterDispatch(int id, int quantity) {
             p->lowStockFlag = (p->stock < LOW_STOCK_THRESHOLD) ? 1 : 0;
             
             if (p->lowStockFlag)
-                printf("⚠️ Low stock alert for product %s (ID: %d)\n", p->name, p->id);
+                printf("Low stock alert for product %s (ID: %d)\n", p->name, p->id);
         } else {
             printf("Insufficient stock for %s (ID: %d). Available: %d, Required: %d\n", 
                    p->name, p->id, p->stock, quantity);
@@ -794,7 +794,10 @@ int main() {
                 break;
             case 5:
                 printf("\n--- PRODUCT INVENTORY ---\n");
-                inorderBST(root);
+                if (root == NULL)
+                    printf("No products in inventory.\n");
+                else
+                    inorderBST(root);
                 break;
             case 6:
                 ordersPlaced();

@@ -50,10 +50,8 @@ struct Product* searchBST(struct Product* root, int id) {
 
 // Performs in-order traversal to display products in sorted order
 void inorderBST(struct Product* root) {
-    if (root == NULL) {
-        printf("No products in inventory.\n");
-        return;
-    }
+    if (root == NULL)
+        return; // just return, no print here
 
     inorderBST(root->left);
     printf("ID: %4d | Name: %-20s | Stock: %4d | Price: $%7.2f | %s\n",
@@ -61,7 +59,6 @@ void inorderBST(struct Product* root) {
            root->lowStockFlag ? "LOW STOCK" : "        ");
     inorderBST(root->right);
 }
-
 // Finds the product with the minimum ID in the BST
 struct Product* findMin(struct Product* root) {
     while (root && root->left != NULL)
