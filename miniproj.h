@@ -1,8 +1,11 @@
 #ifndef WAREHOUSE_H
 #define WAREHOUSE_H
 
-#define LOW_STOCK_THRESHOLD 5    // Threshold for low stock alerts
-#define MAX_HISTORY 100          // Maximum sales records to store
+#include <stddef.h>
+
+// Runtime-configurable settings (set via command-line args)
+extern int LOW_STOCK_THRESHOLD; // Threshold for low stock alerts
+extern int MAX_HISTORY;         // Maximum sales records to store
 
 // ---------------------- STRUCT DEFINITIONS ----------------------
 
@@ -14,7 +17,7 @@ struct Product {
     float price;                // Product price
     int lowStockFlag;           // Flag indicating low stock (1 = low, 0 = normal)
     struct Product *left;       // Pointer to left child in BST
-    struct Product *right;      // Pointer to right child in BST
+    struct Product *right;      // Pointer to right child in BST    
 };
 
 // Represents a customer order in the priority queue
@@ -70,5 +73,13 @@ void ordersPlaced();
 void updateStockAfterDispatch(int id, int quantity);
 void restockProduct();
 void generateReports();
+
+// Initialize runtime configuration (call early from main)
+void initConfig(int lowStockThreshold, int maxHistory);
+
+// ---------------------- INPUT HELPERS ----------------------
+int safeIntInput();
+float safeNonNegativeFloatInput();
+int safePositiveIntInput();
 
 #endif

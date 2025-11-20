@@ -7,14 +7,54 @@
 // Global variables
 struct Product* root = NULL;
 
-// ---- Safe integer input (prevents infinite loop) ----
 int safeIntInput() {
     int value;
-    while (scanf("%d", &value) != 1) {
-        printf("Invalid input! Please enter a number: ");
-        while (getchar() != '\n'); // clear buffer
+    while (1) {
+        if (scanf("%d", &value) != 1) {
+            printf("Invalid input! Please enter a non-negative integer: ");
+            while (getchar() != '\n'); // clear buffer
+            continue;
+        }
+        if (value < 0) {
+            printf("Negative values are not allowed. Please enter a non-negative integer: ");
+            continue;
+        }
+        return value;
     }
-    return value;
+}
+
+// Read a non-negative float from stdin, re-prompting on invalid/negative input
+float safeNonNegativeFloatInput() {
+    float value;
+    while (1) {
+        if (scanf("%f", &value) != 1) {
+            printf("Invalid input! Please enter a non-negative number: ");
+            while (getchar() != '\n');
+            continue;
+        }
+        if (value < 0.0f) {
+            printf("Negative values are not allowed. Please enter a non-negative number: ");
+            continue;
+        }
+        return value;
+    }
+}
+
+// Read a positive integer (>0) from stdin, re-prompting on invalid/<=0 input
+int safePositiveIntInput() {
+    int value;
+    while (1) {
+        if (scanf("%d", &value) != 1) {
+            printf("Invalid input! Please enter a positive integer: ");
+            while (getchar() != '\n');
+            continue;
+        }
+        if (value <= 0) {
+            printf("Only positive integers are allowed. Please enter a positive integer: ");
+            continue;
+        }
+        return value;
+    }
 }
 
 // Helper function to count low stock products
@@ -28,7 +68,7 @@ int countLowStockProducts(struct Product* root) {
 }
 
 // ---------------------- CORE FUNCTION IMPLEMENTATIONS ----------------------
-
+//creating a node and inserting into BST
 void addProduct() {
     int id, stock;
     float price;
@@ -46,9 +86,9 @@ void addProduct() {
     printf("Enter Product Name: ");
     scanf(" %[^\n]", name);
     printf("Enter Stock Quantity: ");
-    stock = safeIntInput();
+        stock = safePositiveIntInput();
     printf("Enter Price: ");
-    scanf("%f", &price);
+    price = safeNonNegativeFloatInput();
 
     root = insertBST(root, id, name, stock, price);
     printf("Product added successfully!\n");
@@ -112,22 +152,22 @@ void updateProductMenu() {
             break;
         case 2:
             printf("Enter new stock quantity: ");
-            newStock = safeIntInput();
+                newStock = safePositiveIntInput();
             p->stock = newStock;
             p->lowStockFlag = (newStock < LOW_STOCK_THRESHOLD) ? 1 : 0;
             break;
         case 3:
             printf("Enter new price: ");
-            scanf("%f", &newPrice);
+            newPrice = safeNonNegativeFloatInput();
             p->price = newPrice;
             break;
         case 4:
             printf("Enter new name: ");
             scanf(" %[^\n]", newName);
             printf("Enter new stock quantity: ");
-            newStock = safeIntInput();
+                newStock = safePositiveIntInput();
             printf("Enter new price: ");
-            scanf("%f", &newPrice);
+            newPrice = safeNonNegativeFloatInput();
             strcpy(p->name, newName);
             p->stock = newStock;
             p->price = newPrice;
@@ -187,7 +227,7 @@ void restockProduct() {
     
     printf("Current stock: %d\n", p->stock);
     printf("Enter quantity to add: ");
-    quantity = safeIntInput();
+    quantity = safePositiveIntInput();
     
     if (quantity <= 0) {
         printf("Invalid quantity!\n");
@@ -273,6 +313,8 @@ void ordersPlaced() {
     char customerName[50];
 
     do {
+        printf("Current inventory details:\n");
+        inorderBST(root);
         printf("\n--- Order Management System ---\n");
         printf("1. New Order\n");
         printf("2. Dispatch Highest Priority Order\n");
@@ -290,7 +332,7 @@ void ordersPlaced() {
                 printf("Enter Product ID: ");
                 pid = safeIntInput();
                 printf("Enter Quantity: ");
-                quantity = safeIntInput();
+                quantity = safePositiveIntInput();
                 printf("Enter Priority (1-10, higher = more urgent): ");
                 prio = safeIntInput();
                 
@@ -345,8 +387,24 @@ void ordersPlaced() {
     } while (choice != 6);
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     int choice;
+    int cfgLow = 5;
+    int cfgMaxHistory = 100;
+
+    // Parse command-line arguments: program <low_stock_threshold> <max_history>
+    if (argc >= 2) {
+        int v = atoi(argv[1]);
+        if (v > 0) cfgLow = v;
+    }
+    if (argc >= 3) {
+        int v = atoi(argv[2]);
+        if (v > 0) cfgMaxHistory = v;
+    }
+
+    // Initialize runtime configuration (allocates sales history)
+    initConfig(cfgLow, cfgMaxHistory);
+
     printf("====== SUPPLY CHAIN MANAGEMENT SYSTEM ======\n");
     printf("           Warehouse Management v2.0        \n\n");
 

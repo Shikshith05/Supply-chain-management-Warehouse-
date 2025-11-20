@@ -4,11 +4,35 @@
 #include <time.h>
 #include "miniproj.h"
 
-// ---------------------- GLOBAL VARIABLES ----------------------
+// Global variables
 
 static struct Order *front = NULL; // Front pointer of the priority queue
-struct SalesRecord salesHistory[MAX_HISTORY]; // Array to store sales history
+
+// Runtime-configurable settings (defaults)
+int LOW_STOCK_THRESHOLD = 5;
+int MAX_HISTORY = 100;
+
+// Dynamically allocated sales history (size = MAX_HISTORY)
+struct SalesRecord *salesHistory = NULL; // allocated by initConfig
 int salesCount = 0; // Counter for sales records
+
+// Initialize runtime configuration (call early from main)
+void initConfig(int lowStockThreshold, int maxHistory) {
+    if (lowStockThreshold > 0) LOW_STOCK_THRESHOLD = lowStockThreshold;
+    if (maxHistory > 0) {
+        MAX_HISTORY = maxHistory;
+        if (salesHistory != NULL) {
+            free(salesHistory);
+            salesHistory = NULL;
+            salesCount = 0;
+        }
+        salesHistory = (struct SalesRecord*)malloc(sizeof(struct SalesRecord) * MAX_HISTORY);
+        if (salesHistory == NULL) {
+            fprintf(stderr, "Failed to allocate sales history with size %d\n", MAX_HISTORY);
+            MAX_HISTORY = 0;
+        }
+    }
+}
 
 // ---------------------- BST IMPLEMENTATION ----------------------
 
@@ -208,6 +232,21 @@ void clearAllOrders() {
 
 // Adds a completed sale to the sales history array
 void addSalesRecord(int id, char name[], int quantity, float amount, char date[]) {
+    if (salesHistory == NULL) {
+        // attempt lazy allocation with current MAX_HISTORY
+        if (MAX_HISTORY > 0) {
+            salesHistory = (struct SalesRecord*)malloc(sizeof(struct SalesRecord) * MAX_HISTORY);
+            if (salesHistory == NULL) {
+                printf("Unable to record sale: out of memory.\n");
+                return;
+            }
+            salesCount = 0;
+        } else {
+            printf("Sales history disabled (MAX_HISTORY=0).\n");
+            return;
+        }
+    }
+
     if (salesCount < MAX_HISTORY) {
         salesHistory[salesCount].productId = id;
         strcpy(salesHistory[salesCount].productName, name);
