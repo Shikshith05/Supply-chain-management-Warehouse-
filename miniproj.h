@@ -18,6 +18,7 @@ struct Product {
     int lowStockFlag;           // Flag indicating low stock (1 = low, 0 = normal)
     struct Product *left;       // Pointer to left child in BST
     struct Product *right;      // Pointer to right child in BST    
+    char supplier[50];          // Supplier name
 };
 
 // Represents a customer order in the priority queue
@@ -40,7 +41,7 @@ struct SalesRecord {
 
 // ---------------------- BST FUNCTION DECLARATIONS ----------------------
 
-struct Product* insertBST(struct Product*, int, char[], int, float);
+struct Product* insertBST(struct Product*, int, char[], int, float,char []);
 struct Product* searchBST(struct Product*, int);
 void inorderBST(struct Product*);
 struct Product* findMin(struct Product*);

@@ -37,13 +37,14 @@ void initConfig(int lowStockThreshold, int maxHistory) {
 // ---------------------- BST IMPLEMENTATION ----------------------
 
 // Inserts a new product node into the Binary Search Tree
-struct Product* insertBST(struct Product* root, int id, char name[], int stock, float price) {
+struct Product* insertBST(struct Product* root, int id, char name[], int stock, float price,char supplier[]) {
     if (root == NULL) {
         struct Product* newNode = (struct Product*)malloc(sizeof(struct Product));
         newNode->id = id;
         strcpy(newNode->name, name);
         newNode->stock = stock;
         newNode->price = price;
+        strcpy(newNode->supplier, supplier);
         newNode->lowStockFlag = (stock < LOW_STOCK_THRESHOLD) ? 1 : 0;
         newNode->left = newNode->right = NULL;
         return newNode;
@@ -55,9 +56,9 @@ struct Product* insertBST(struct Product* root, int id, char name[], int stock, 
     }
 
     if (id < root->id)
-        root->left = insertBST(root->left, id, name, stock, price);
+        root->left = insertBST(root->left, id, name, stock, price,supplier);
     else
-        root->right = insertBST(root->right, id, name, stock, price);
+        root->right = insertBST(root->right, id, name, stock, price,supplier);
 
     return root;
 }
@@ -78,9 +79,9 @@ void inorderBST(struct Product* root) {
         return; // just return, no print here
 
     inorderBST(root->left);
-    printf("ID: %4d | Name: %-20s | Stock: %4d | Price: $%7.2f | %s\n",
+    printf("ID: %4d | Name: %-20s | Stock: %4d | Price: $%7.2f | %s | Supplier Name: %-20s \n",
            root->id, root->name, root->stock, root->price,
-           root->lowStockFlag ? "LOW STOCK" : "        ");
+           root->lowStockFlag ? "LOW STOCK" : "        ", root->supplier);
     inorderBST(root->right);
 }
 // Finds the product with the minimum ID in the BST

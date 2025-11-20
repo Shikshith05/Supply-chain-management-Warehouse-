@@ -72,7 +72,7 @@ int countLowStockProducts(struct Product* root) {
 void addProduct() {
     int id, stock;
     float price;
-    char name[50];
+        char name[50], supplier[50];
 
     printf("Enter Product ID: ");
     id = safeIntInput();
@@ -89,8 +89,10 @@ void addProduct() {
         stock = safePositiveIntInput();
     printf("Enter Price: ");
     price = safeNonNegativeFloatInput();
+        printf("Enter Supplier Name: ");
+        scanf(" %[^\n]", supplier);
 
-    root = insertBST(root, id, name, stock, price);
+    root = insertBST(root, id, name, stock, price,supplier);
     printf("Product added successfully!\n");
     
     struct Product *p = searchBST(root, id);
