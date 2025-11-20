@@ -125,6 +125,7 @@ void updateProductMenu() {
     int id, choice, newStock;
     float newPrice;
     char newName[50];
+    char newSupplier[50];
     
     printf("Enter Product ID to update: ");
     id = safeIntInput();
@@ -136,13 +137,14 @@ void updateProductMenu() {
     }
     
     printf("\nCurrent Details:\n");
-    printf("Name: %s | Stock: %d | Price: $%.2f\n", p->name, p->stock, p->price);
+    printf("Name: %s | Stock: %d | Price: $%.2f |Supplier Name: %s \n ", p->name, p->stock, p->price,p->supplier);
     
     printf("\nWhat would you like to update?\n");
     printf("1. Update Name\n");
     printf("2. Update Stock\n");
     printf("3. Update Price\n");
     printf("4. Update All\n");
+    printf("5. Update Supplier Name\n");
     printf("Enter choice: ");
     choice = safeIntInput();
     
@@ -174,6 +176,11 @@ void updateProductMenu() {
             p->stock = newStock;
             p->price = newPrice;
             p->lowStockFlag = (newStock < LOW_STOCK_THRESHOLD) ? 1 : 0;
+            break;
+        case 5:
+                printf("Enter new supplier name: ");
+                scanf(" %[^\n]", newSupplier);
+                strcpy(p->supplier, newSupplier);
             break;
         default:
             printf("Invalid choice!\n");
